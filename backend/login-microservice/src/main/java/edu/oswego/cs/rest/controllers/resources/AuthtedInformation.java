@@ -2,7 +2,6 @@ package edu.oswego.cs.rest.controllers.resources;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +14,7 @@ import com.ibm.websphere.security.jwt.InvalidBuilderException;
 import com.ibm.websphere.security.jwt.InvalidClaimException;
 import com.ibm.websphere.security.jwt.JwtException;
 import com.google.api.services.oauth2.model.Tokeninfo;
+
 import edu.oswego.cs.rest.controllers.utils.OAuthUtils;
 
 @WebServlet("/authenticated")
@@ -54,17 +54,19 @@ public class AuthtedInformation extends HttpServlet {
                 pwriter.println("User ID: " +userInfo.getId());
 
 
-
+                // JWT
                 try {
                     String jwtToken = OAuthUtils.buildJWT(sessionId);
-
                     pwriter.println();
                     pwriter.println("JWT: " +jwtToken);
 
-
                 } catch (JwtException | InvalidBuilderException | InvalidClaimException e) {
                     e.printStackTrace();
+                    pwriter.println("JWT is not available");
+
                 }
+
+
 
             } else {
                 pwriter.println("401 Not Authenticated!");
@@ -75,6 +77,7 @@ public class AuthtedInformation extends HttpServlet {
 
         } else{
             pwriter.println("Not authenticated");
+            response.sendRedirect("http://localhost:13126/login");
         }
     }
 }

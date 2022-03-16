@@ -2,9 +2,6 @@ package edu.oswego.cs.rest.controllers.utils;
 
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -39,11 +36,17 @@ public class OAuthUtils {
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email");
 
-    private static final String fullURL = System.getenv("REACT_APP_URL");
-    private static final String oauthClientId = System.getenv("CLIENT_ID");
-    private static final String oauthClientSecret = System.getenv("CLIENT_SECRET");
-    private static final String oauthAppName = System.getenv("APP_NAME");
-    private static final String emailDomain = System.getenv("EMAIL_DOMAIN");
+    private static final String fullURL = "http://localhost:13126";
+    private static final String oauthClientId = "952282231282-ned8emonjrqbhj8v5b8efcr94d3nh13j.apps.googleusercontent.com";
+    private static final String oauthClientSecret = "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";
+    private static final String oauthAppName = "CPR";
+    private static final String emailDomain = "oswego.edu";
+    // private static final String fullURL = System.getenv("REACT_APP_URL");
+    // private static final String oauthClientId = System.getenv("CLIENT_ID");
+    // private static final String oauthClientSecret = System.getenv("CLIENT_SECRET");
+    // private static final String oauthAppName = System.getenv("APP_NAME");
+    // private static final String emailDomain = System.getenv("EMAIL_DOMAIN");
+  
 
     public static GoogleAuthorizationCodeFlow flow;
 
@@ -104,51 +107,20 @@ public class OAuthUtils {
         Userinfo userinfo = getUserInfo(sessionId);
         Set<String> roles = new HashSet<String>();
         roles.add("students");
-        
-        Map<String, Object> rsaKeys = null;
-        
-        try {
-            rsaKeys = getRSAKeys();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        PublicKey publicKey = (PublicKey) rsaKeys.get("public");
-        PrivateKey privateKey = (PrivateKey) rsaKeys.get("private");
-
-        String jwtToken;
-        try {
-            jwtToken = JwtBuilder.create()
-                    .claim(Claims.SUBJECT, userinfo.getEmail()) // subject (the user)
-                    .claim("upn", userinfo.getEmail()) // user principle name
-                    .claim("roles", roles.toArray(new String[roles.size()])) // group
-                    .claim("aud", fullURL) // audience
-                    .claim("access_token", accessToken) // access token from google
-                    .claim("hd", userinfo.getHd())
-                    .claim("first_name", userinfo.getGivenName())
-                    .claim("last_name", userinfo.getFamilyName())
-                    .claim("userID", userinfo.getId())
-                    .signWith("RS512", privateKey) // signWith won't work with key yet
-                    .buildJwt().compact();
-            return jwtToken;
-        } catch (KeyException e) {
-            e.printStackTrace();
-            return "JWT Token is not available!";
-        }
+        String jwtToken = "";
+        jwtToken = JwtBuilder.create("cpr22s")
+                .claim(Claims.SUBJECT, userinfo.getEmail()) // subject (the user)
+                .claim("upn", userinfo.getEmail()) // user principle name
+                .claim("roles", roles.toArray(new String[roles.size()])) // group
+                .claim("aud", fullURL) // audience
+                .claim("access_token", accessToken) // access token from google. 
+                .claim("hd", userinfo.getHd()) // host domain
+                .claim("first_name", userinfo.getGivenName()) 
+                .claim("last_name", userinfo.getFamilyName())
+                .claim("userID", userinfo.getId()) // google userID
+                .buildJwt().compact();
+        return jwtToken;
     }
 
-
-    public static Map<String, Object> getRSAKeys() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();// generate key pair
-        PrivateKey privateKey = keyPair.getPrivate(); // generate private
-        PublicKey publicKey = keyPair.getPublic(); // generate public
-
-        Map<String, Object> keys = new HashMap<String, Object>();
-        keys.put("private", privateKey);
-        keys.put("public", publicKey);
-        return keys;
-    }
 }
