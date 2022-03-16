@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class FileDAO {
     private String filename;
     private String course;
-    private static final String UPLOAD_FOLDER = getAssignmentDir();
+    private InputStream file;
 //    v this is how UPLOAD_FOLDER WILL END UP LOOKING LIKE v
 //  private static final String UPLOAD_FOLDER = DB.findHwFolder(course, filename);
 
@@ -23,28 +23,37 @@ public class FileDAO {
      * @throws IOException File Corruption Exception
      */
     public static FileDAO FileFactory(String fileName, IAttachment attachment) throws IOException {
-        File tempFile = new File(UPLOAD_FOLDER + fileName);
         String courseName = fileName.split("\\.")[0];
-        OutputStream outputStream = new FileOutputStream(tempFile);
         InputStream inputStream = attachment.getDataHandler().getInputStream();
-        outputStream.write(inputStream.readAllBytes());
-        System.out.println("fileName: " + fileName + "courseName: " + courseName + tempFile.getAbsolutePath());
-        return new FileDAO(fileName, courseName);
+        System.out.println("fileName: " + fileName + "courseName: " + courseName);
+        return new FileDAO(fileName, courseName, inputStream);
+    }
+    /**
+    * Writes the inputStream to a file.
+    * */
+    public void writeFile (String filePath) throws IOException {
+        OutputStream outputStream = new FileOutputStream(filePath);
+        outputStream.write(file.readAllBytes());
     }
 
     /**
-     * Temporary function to place the file in the correct folder. Will be replaced
-     * by a DataBase function.
+     * Retrieves the relative location of the root Directory
      *
      * @return String directory location the hw files should be saved to
      * */
-    private static String getAssignmentDir(){
-        String pattern = Pattern.quote(System.getProperty("file.separator"));
-        StringBuilder startingDir = new StringBuilder(System.getProperty("user.dir") + "\\");
-        String[] splitDir = startingDir.toString().split(pattern);
-        int rootIndex = Arrays.asList(splitDir).indexOf("professor-assignment-microservice");
-        int l = splitDir.length;
-        startingDir.append("../".repeat(Math.max(0, (l - rootIndex - 1))));
-        return startingDir.toString();
+    public static String getProjectRootDir(){
+        String path = (System.getProperty("user.dir").contains("\\")) ? System.getProperty("user.dir").replace("\\", "/") : System.getProperty("user.dir");
+        String[] slicedPath = path.split("/");
+        String targetDir = "professor-assignment-microservice";
+        int i;
+        StringBuilder relativePathPrefix = new StringBuilder();
+        System.out.println(Arrays.toString(slicedPath));
+        for (i = slicedPath.length - 1; ! slicedPath[i].equals(targetDir); i--) {
+            relativePathPrefix.append("../");
+        }
+        if (System.getProperty("user.dir").contains("\\")) {
+            relativePathPrefix = new StringBuilder(relativePathPrefix.toString().replace("/", "\\"));
+        }
+        return relativePathPrefix.toString();
     }
 }
