@@ -13,11 +13,7 @@ import java.util.List;
 
 @Path("/teams")
 public class peerReviewTeamsResource {
-    @GET
-    public String getApp() {
-        return "Pages";
-    }
-
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json")
@@ -71,7 +67,7 @@ public class peerReviewTeamsResource {
     }
     
     @GET
-    @Path("team/getallteams")
+    @Path("team/get-all-teams")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTeams(TeamParam request) { 
@@ -86,14 +82,13 @@ public class peerReviewTeamsResource {
             + show all teams to professors
         */
         try {
-            List<Document> res = new TeamInterface().getAllTeamsHandler(request.getCourseID());
+            List<Document> res = new TeamInterface().getAllTeamsHandler(request.getCourse_id());
             return Response.status(Response.Status.OK).entity(res).build();
         } catch (Exception e) {
-            List<Document> errors = new ArrayList<Document>();
+            List<Document> errors = new ArrayList<>();
             errors.add(new Document(e.toString(), Exception.class));
             return Response.status(Response.Status.BAD_REQUEST).entity(errors).build();
         }
-
     }
 
     @GET
@@ -137,10 +132,10 @@ public class peerReviewTeamsResource {
 
         try {
             TeamParam teamParam = new TeamParam();
-            teamParam.setCourseID(request.getCourseID());
-            teamParam.setStudentID(request.getStudentID());
-            teamParam.setTeamID(request.getNewTeamID());
-            teamParam.setTeamSize(request.getNewTeamSize());
+            teamParam.setCourse_id(request.getCourse_id());
+            teamParam.setStudent_id(request.getStudent_id());
+            teamParam.setTeam_id(request.getNew_team_id());
+            teamParam.setTeam_size(request.getNew_team_size());
             int result = new TeamInterface().joinTeamHandler(teamParam);
 
             if (result == 0) {
@@ -171,7 +166,7 @@ public class peerReviewTeamsResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("team/generateteamname")
+    @Path("team/generate-team-name")
     public Response generateTeamName(String studenID, String targetedTeamID, String teamName) { 
         /* DESCRIPTION
             - requirements 4.2.3-7 : teamLead creates a name for the team
@@ -223,7 +218,7 @@ public class peerReviewTeamsResource {
     }
 
     @PUT
-    @Path("team/finalizeteam")
+    @Path("team/finalize-team")
     public Response finalizeTeam(String studenID, String targetedTeamID) { 
 
         /* DESCRIPTION
@@ -253,7 +248,7 @@ public class peerReviewTeamsResource {
     }
 
     @GET
-    @Path("team/isteamfinalized")
+    @Path("team/is-team-finalized")
     public Boolean isTeamFinallized(String targetedTeamID) { 
         /* DESCRIPTION
             - requirements 4.2.3-11: Make sure the whole team click the "finalize button" to move on with the course (see other assignments)
