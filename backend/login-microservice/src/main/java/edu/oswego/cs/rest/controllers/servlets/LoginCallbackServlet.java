@@ -42,13 +42,11 @@ public class LoginCallbackServlet extends AbstractAuthorizationCodeCallbackServl
     }
 
     @Override
-    protected void onSuccess(HttpServletRequest request, HttpServletResponse response, Credential credential)
-            throws IOException {
+    protected void onSuccess(HttpServletRequest request, HttpServletResponse response, Credential credential) throws IOException {
 
         String sessionId = request.getSession().getId();
         boolean isUserLoggedIn = OAuthUtils.isUserLoggedIn(sessionId);
         boolean isOswego = OAuthUtils.isOswego(sessionId);
-
 
         if (isUserLoggedIn) {
             if (isOswego) {
@@ -59,8 +57,7 @@ public class LoginCallbackServlet extends AbstractAuthorizationCodeCallbackServl
                     response.addCookie(cookie);
                     response.setStatus(200);
 
-                    response.sendRedirect(fullURL); 
-                    // response.sendRedirect(fullURL + "?token=" + jwtToken); 
+                    response.sendRedirect(fullURL + "/?token=" + jwtToken);
                 } catch (JwtException | InvalidBuilderException | InvalidClaimException e) {
                     e.printStackTrace();
                 }

@@ -1,16 +1,17 @@
 package edu.oswego.cs.resources;
 
+import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
+import edu.oswego.cs.daos.CourseDAO;
 import edu.oswego.cs.daos.FileDAO;
 import edu.oswego.cs.daos.StudentDAO;
-import edu.oswego.cs.daos.CourseDAO;
 import edu.oswego.cs.database.CourseInterface;
-import edu.oswego.cs.util.CSVUtil;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.ibm.websphere.jaxrs20.multipart.IAttachment;
-import com.ibm.websphere.jaxrs20.multipart.IMultipartBody;
 
 
 @Path("professor")
@@ -47,7 +48,7 @@ public class CourseManagerResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("courses/course/student/add")
     public Response addStudent(StudentDAO studentDAO) {
-        CourseDAO course = new CourseDAO(studentDAO.courseName, studentDAO.courseSection, studentDAO.semester ,studentDAO.abbreviation);
+        CourseDAO course = new CourseDAO(studentDAO.courseName, studentDAO.courseSection, studentDAO.semester, studentDAO.abbreviation);
         try {
             new CourseInterface().addStudent(studentDAO.email, course);
         } catch (Exception e) {
@@ -61,7 +62,7 @@ public class CourseManagerResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("courses/course/student/delete")
     public Response deleteStudent(StudentDAO studentDAO) {
-        CourseDAO course = new CourseDAO(studentDAO.courseName, studentDAO.courseSection, studentDAO.semester,studentDAO.abbreviation);
+        CourseDAO course = new CourseDAO(studentDAO.courseName, studentDAO.courseSection, studentDAO.semester, studentDAO.abbreviation);
         try {
             new CourseInterface().removeStudent(studentDAO.email, course);
         } catch (Exception e) {
@@ -75,21 +76,17 @@ public class CourseManagerResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("courses/course/student/massadd")
     public Response addStudentByCSVFile(IMultipartBody body) throws Exception {
-        String modifiedFileName = "";
-        // Checking for if the submitting file is the right file type, only accepting csv files.
-        for (IAttachment attachment : body.getAllAttachments()) {
-            String name = attachment.getDataHandler().getName();
-            if (name.contains("Cloud_name")) modifiedFileName = CSVUtil.getModifiedFileName(attachment);
-        }
         FileDAO fileDAO;
         try {
-            fileDAO = FileDAO.FileFactory(body.getAllAttachments(), modifiedFileName);
+            fileDAO = FileDAO.FileFactory(body.getAllAttachments());
         } catch (Exception e) {
+            System.out.println("File corruption.");
             return Response.status(Response.Status.BAD_REQUEST).entity("File Corrupted. Try Again").build();
         }
         try {
             new CourseInterface().addStudentsFromCSV(fileDAO);
         } catch (Exception e) {
+            System.out.println("Student Not added.");
             return Response.status(Response.Status.BAD_REQUEST).entity("Students Not Successfully Added.").build();
         }
         return Response.status(Response.Status.OK).build();
