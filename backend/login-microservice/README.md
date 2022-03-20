@@ -8,15 +8,19 @@
 `openssl genrsa -des3 -out private.key 2048`
 
 - Generate a public RSA key based the new generated private.key
+
 ```openssl rsa -in private.key -outform PEM -pubout -out public.key```
 
 - Generate a CA certificate (this can be used to sign a self-certificate to access to self-SSL cert|HTTPS locally)
+
 ```openssl req -x509 -new -nodes -key private.key -sha256 -days 1825 -out CA.crt```
 
 - Export PKCS12 key
+
 ```openssl pkcs12 -export -out YOUR_KEY_NAME.p12 -inkey private.key -in CA.crt```
 
 - Decrypt the pkcs12 key
+
 ```openssl pkcs12 -info -in YOUR_KEY_NAME.p12 -out decrypted_pkcs12.txt```
 
 - Get back to CPR, navigate to server.xml, make sure the following is configured
