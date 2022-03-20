@@ -47,8 +47,7 @@ public class TeamInterface {
     public ArrayList<Integer> initTeamHandler(TeamParam request) {
         try {
             Document courseDoc = courseDB.getCollection("Courses").find(new Document(courseID, request.getCourseID())).first();
-            @SuppressWarnings("unchecked")
-            ArrayList<String> students = (ArrayList<String>) courseDoc.get("Students");
+            List<String> students = courseDoc.getList("Students", String.class);
 
             int totalStudent = students.size();
             int teamSize = request.getTeamSize();
@@ -189,7 +188,7 @@ public class TeamInterface {
     public List<Document> getAllTeamsHandler(String courseID) {
         /* desc: get A list of all teams */
         try {
-            Document courseDoc = courseCollection.find(new Document(CID, courseID)).first();
+            Document courseDoc = courseCollection.find(new Document(courseID, courseID)).first();
             return courseDoc.getList("Teams", Document.class);
         } catch (Exception e) {
             List<Document> errors = new ArrayList<Document>();

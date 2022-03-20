@@ -13,6 +13,11 @@ import java.util.List;
 
 @Path("/teams")
 public class peerReviewTeamsResource {
+    @GET
+    public String getApp() {
+        return "Pages";
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/json")

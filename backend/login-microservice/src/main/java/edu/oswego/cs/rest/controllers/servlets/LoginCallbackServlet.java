@@ -57,7 +57,7 @@ public class LoginCallbackServlet extends AbstractAuthorizationCodeCallbackServl
                     response.addCookie(cookie);
                     response.setStatus(200);
 
-                    response.sendRedirect(fullURL + "/?token=" + jwtToken);
+                    response.sendRedirect(fullURL + "?token=" + jwtToken);
                 } catch (JwtException | InvalidBuilderException | InvalidClaimException e) {
                     e.printStackTrace();
                 }

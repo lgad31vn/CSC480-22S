@@ -97,16 +97,8 @@ public class OAuthUtils {
         Set<String> roles = new HashSet<String>();
         roles.add("students");
 
-        Map<String, Object> rsaKeys = null;
-
-        try {
-            rsaKeys = getRSAKeys();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String jwtToken = "";
-        jwtToken = JwtBuilder.create("cpr22s")
+       
+        String jwtToken = JwtBuilder.create("cpr22s")
                 .claim(Claims.SUBJECT, userinfo.getEmail()) // subject (the user)
                 .claim("upn", userinfo.getEmail()) // user principle name
                 .claim("roles", roles.toArray(new String[roles.size()])) // group
@@ -121,17 +113,4 @@ public class OAuthUtils {
     }
 
 
-    public static Map<String, Object> getRSAKeys() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();// generate key pair
-        PrivateKey privateKey = keyPair.getPrivate(); // generate private
-        PublicKey publicKey = keyPair.getPublic(); // generate public
-
-        Map<String, Object> keys = new HashMap<String, Object>();
-        keys.put("private", privateKey);
-        keys.put("public", publicKey);
-        return keys;
-    }
 }
