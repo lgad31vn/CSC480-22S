@@ -188,7 +188,7 @@ public class TeamInterface {
     public List<Document> getAllTeamsHandler(String courseID) {
         /* desc: get A list of all teams */
         try {
-            Document courseDoc = courseCollection.find(new Document(courseID, courseID)).first();
+            Document courseDoc = courseCollection.find(new Document(this.courseID, courseID)).first();
             return courseDoc.getList("Teams", Document.class);
         } catch (Exception e) {
             List<Document> errors = new ArrayList<Document>();
