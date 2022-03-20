@@ -280,7 +280,6 @@ public class TeamInterface {
                     studentCollection.updateOne(nextLeadDoc, nextLeadUpdates, nextLeadOptions);
                 }
             }
-
             return 0;
         } catch (Exception e) {
             return -1;
