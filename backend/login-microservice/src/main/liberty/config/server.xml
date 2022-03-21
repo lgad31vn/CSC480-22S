@@ -17,8 +17,10 @@
     />
     <applicationManager autoExpand="true"/>
 
-    <keyStore id="cpr22sKS" password="cpr22s" location="cprJwtKey.p12"/>
-    <jwtBuilder expiresInSeconds="600" id="cpr22s" issuer="https://localhost:13126" keyStoreRef="cpr22sKS" signatureAlgorithm="RS512" />
+    <!-- <keyStore id="cpr22sKS" password="cpr22s" location="cprJwtKey.p12"/> -->
+    <!-- <jwtBuilder expiresInSeconds="600" id="cpr22s" issuer="https://localhost:13126" keyStoreRef="cpr22sKS"  /> -->
+    
+    <jwtBuilder expiresInSeconds="600" id="cpr22s" issuer="https://localhost:13126" jwkEnabled="true" />
 
     <webApplication contextRoot="${app.context.root}" location="login-microservice.war" />
         

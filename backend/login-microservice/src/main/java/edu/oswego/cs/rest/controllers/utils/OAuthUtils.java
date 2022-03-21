@@ -102,7 +102,7 @@ public class OAuthUtils {
                 .claim(Claims.SUBJECT, userinfo.getEmail()) // subject (the user)
                 .claim("upn", userinfo.getEmail()) // user principle name
                 .claim("roles", roles.toArray(new String[roles.size()])) // group
-                .claim("aud", fullURL) // audience
+                .claim("aud", "CPR22S480") // audience
                 .claim("access_token", accessToken) // access token from google. 
                 .claim("hd", userinfo.getHd()) // host domain
                 .claim("first_name", userinfo.getGivenName()) 

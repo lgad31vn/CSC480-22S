@@ -5,6 +5,9 @@ import edu.oswego.cs.rest.requests.SwitchTeamParam;
 import edu.oswego.cs.rest.requests.TeamParam;
 import org.bson.Document;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("/teams")
-public class peerReviewTeamsResource {
+@RequestScoped
+public class PeerReviewTeamsResource {
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +74,7 @@ public class peerReviewTeamsResource {
     @Path("team/get-all-teams")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("students")
     public Response getAllTeams(TeamParam request) { 
         /*      
          - DESC: 
